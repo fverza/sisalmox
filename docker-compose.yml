@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sisalmox-db
+    restart: always
+    environment:
+      POSTGRES_USER: sisalmox_user
+      POSTGRES_PASSWORD: sisalmox_password
+      POSTGRES_DB: sisalmox_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sisalmox-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sisalmox-backend
+    restart: always
+    command: npm run dev
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=development
+      - DB_DIALECT=postgres
+      - DB_HOST=db
+      - DB_USER=sisalmox_user
+      - DB_PASS=sisalmox_password
+      - DB_NAME=sisalmox_prod
+      - JWT_SECRET=supersecretjwttokenkey
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+    networks:
+      - sisalmox-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sisalmox-frontend
+    restart: always
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - sisalmox-network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  sisalmox-network:
+    driver: bridge
