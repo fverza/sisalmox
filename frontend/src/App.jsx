@@ -12,11 +12,14 @@ import {
   ArrowUpRight,
   Sliders,
   FileSpreadsheet,
-  Search
+  Search,
+  ShoppingCart
 } from 'lucide-react';
 import axios from 'axios';
 import Patrimonios from './pages/Patrimonios';
 import Importar from './pages/Importar';
+import EstoqueSaldos from './pages/EstoqueSaldos';
+import EstoqueMovimentacao from './pages/EstoqueMovimentacao';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -53,7 +56,7 @@ function App() {
       
       {/* Top Banner / Header */}
       <header className="sticky top-0 z-50 glassmorphism border-b border-slate-800/60 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
           
           {/* Brand/Logo */}
           <div className="flex items-center space-x-3">
@@ -71,11 +74,11 @@ function App() {
           </div>
 
           {/* Navigation Tabs */}
-          <nav className="flex space-x-1 p-1 bg-slate-950/60 rounded-xl border border-slate-800/60">
+          <nav className="flex flex-wrap gap-1 p-1 bg-slate-950/60 rounded-xl border border-slate-800/60">
             <button
               id="tab-dashboard"
               onClick={() => setActiveTab('dashboard')}
-              className={`px-4 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
                 activeTab === 'dashboard'
                   ? 'bg-brand-600 text-white shadow-md shadow-brand-500/10'
                   : 'text-slate-400 hover:text-slate-200'
@@ -88,7 +91,7 @@ function App() {
             <button
               id="tab-patrimonios"
               onClick={() => setActiveTab('patrimonios')}
-              className={`px-4 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
                 activeTab === 'patrimonios'
                   ? 'bg-brand-600 text-white shadow-md shadow-brand-500/10'
                   : 'text-slate-400 hover:text-slate-200'
@@ -99,9 +102,35 @@ function App() {
             </button>
 
             <button
+              id="tab-estoque-saldos"
+              onClick={() => setActiveTab('estoque-saldos')}
+              className={`px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
+                activeTab === 'estoque-saldos'
+                  ? 'bg-brand-600 text-white shadow-md shadow-brand-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span>Saldo de Estoque</span>
+            </button>
+
+            <button
+              id="tab-estoque-mov"
+              onClick={() => setActiveTab('estoque-mov')}
+              className={`px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
+                activeTab === 'estoque-mov'
+                  ? 'bg-brand-600 text-white shadow-md shadow-brand-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              <span>Lançar Movimentação</span>
+            </button>
+
+            <button
               id="tab-importar"
               onClick={() => setActiveTab('importar')}
-              className={`px-4 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-all flex items-center space-x-1.5 ${
                 activeTab === 'importar'
                   ? 'bg-brand-600 text-white shadow-md shadow-brand-500/10'
                   : 'text-slate-400 hover:text-slate-200'
@@ -225,7 +254,7 @@ function App() {
                     id="btn-test-connection"
                     onClick={checkHealth}
                     disabled={checking}
-                    className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold cursor-pointer transition-all shadow-md shadow-brand-500/10 hover:shadow-brand-500/20 active:scale-98 disabled:opacity-50 flex items-center space-x-2"
+                    className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold cursor-pointer transition-all shadow-md shadow-brand-500/10 hover:shadow-brand-500/20 active:scale-98 flex items-center space-x-2"
                   >
                     <span>Testar Conectividade</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -260,11 +289,21 @@ function App() {
                       </div>
                       <p className="text-xs text-slate-400 leading-relaxed">Criação dos modelos Sequelize relacionais, script semeador (`seed.js`), importador automático de planilha CSV e telas de busca/consulta.</p>
                     </div>
+                    <span className="px-2 py-1 rounded bg-brand-500/20 text-brand-400 text-xs font-semibold">Concluído</span>
+                  </div>
+
+                  <div className="p-4 bg-brand-500/10 border border-brand-500/20 rounded-xl flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-400">FASE 3</span>
+                        <h3 className="font-semibold text-white text-sm">Módulo de Estoque e Consumíveis</h3>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-relaxed">Entradas e saídas de estoque por lote e custeamento ponderado acumulado mensal com saldo físico e de valor médio.</p>
+                    </div>
                     <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 text-xs font-semibold">Concluído</span>
                   </div>
 
                   {[
-                    { phase: 'FASE 3', title: 'Módulo de Estoque e Consumíveis', desc: 'Entradas/Saídas de estoque e cálculo de valor médio mensal.' },
                     { phase: 'FASE 4', title: 'Módulo de Movimentação (FMM) e Carga', desc: 'Numerador de documentos, motor de PDF e termos de Carga Pessoal.' },
                     { phase: 'FASE 5', title: 'Auditoria, Segurança e Produção', desc: 'Logs imutáveis de movimentação e migração final do ambiente de produção.' }
                   ].map((step, idx) => (
@@ -348,6 +387,10 @@ function App() {
 
         {activeTab === 'patrimonios' && <Patrimonios />}
         
+        {activeTab === 'estoque-saldos' && <EstoqueSaldos />}
+
+        {activeTab === 'estoque-mov' && <EstoqueMovimentacao />}
+
         {activeTab === 'importar' && <Importar />}
 
       </main>

@@ -1,10 +1,21 @@
-const { sequelize, OPM, Secao, Usuario, Material, Patrimonio } = require('../models');
+const { sequelize, OPM, Secao, Usuario, Material, Patrimonio, Natureza } = require('../models');
 
 async function seed() {
   try {
     console.log('Sincronizando banco de dados (force: true)...');
     await sequelize.sync({ force: true });
     console.log('Banco de dados sincronizado.');
+
+    console.log('Criando Naturezas de Despesa...');
+    const natConsumo = await Natureza.create({
+      codigo: '339030',
+      descricao: 'Material de Consumo'
+    });
+
+    const natPermanente = await Natureza.create({
+      codigo: '449052',
+      descricao: 'Equipamentos e Material Permanente'
+    });
 
     console.log('Criando OPMs de referência...');
     const cpi5 = await OPM.create({
@@ -33,7 +44,7 @@ async function seed() {
       controla_estoque: true
     });
 
-    const secTelematica = await Secao.create({
+    const secTelematic = await Secao.create({
       nome: 'Telemática (TI e Informática)',
       controla_estoque: true
     });
@@ -53,7 +64,7 @@ async function seed() {
       nome: 'Capitão PM Administrador',
       re: '123456-7',
       login: 'admin',
-      senha: 'admin123', // Será encriptado pelo hook beforeSave do modelo Usuario
+      senha: 'admin123',
       opm_id: bpm17.id,
       secao_id: secAlmoxarifado.id,
       papel: 'admin'
@@ -80,19 +91,19 @@ async function seed() {
     });
 
     console.log('Criando materiais de teste...');
-    const mat1 = await Material.create({
+    await Material.create({
       codigo_siafisico: '1234567',
       descricao: 'Pistola Glock G22 Gen5 .40 S&W',
       unidade_medida: 'UN'
     });
 
-    const mat2 = await Material.create({
+    await Material.create({
       codigo_siafisico: '7654321',
       descricao: 'Colete Balístico IIIA Masculino M',
       unidade_medida: 'UN'
     });
 
-    const mat3 = await Material.create({
+    await Material.create({
       codigo_siafisico: '9988771',
       descricao: 'Rádio Transceptor Portátil APX8000',
       unidade_medida: 'UN'
@@ -110,45 +121,6 @@ async function seed() {
       re_detentor: '123456-7',
       opm_atual_id: bpm17.id,
       secao_atual_id: secArmamento.id
-    });
-
-    await Patrimonio.create({
-      numero_patrimonio: 'PMESP-551002',
-      numero_serie: 'FL88371',
-      grupo: 'ARM',
-      descricao: 'Fuzil IMBEL IA2, calibre 5.56mm, com bandoleira e 2 carregadores',
-      marca: 'IMBEL',
-      modelo: 'IA2',
-      valor_compra: 8500.00,
-      re_detentor: null,
-      opm_atual_id: bpm17.id,
-      secao_atual_id: secArmamento.id
-    });
-
-    await Patrimonio.create({
-      numero_patrimonio: 'PMESP-552001',
-      numero_serie: 'COL-88273',
-      grupo: 'DIV',
-      descricao: 'Colete Balístico CBC IIIA, tamanho M, validade 2029',
-      marca: 'CBC',
-      modelo: 'IIIA',
-      valor_compra: 1200.00,
-      re_detentor: '987654-3',
-      opm_atual_id: bpm17.id,
-      secao_atual_id: secAlmoxarifado.id
-    });
-
-    await Patrimonio.create({
-      numero_patrimonio: 'PMESP-553001',
-      numero_serie: 'RD-APX-3392',
-      grupo: 'TEL',
-      descricao: 'Rádio Portátil Motorola APX8000 com antena helicoidal',
-      marca: 'Motorola',
-      modelo: 'APX8000',
-      valor_compra: 15000.00,
-      re_detentor: null,
-      opm_atual_id: bpm52.id,
-      secao_atual_id: secTelecom.id
     });
 
     console.log('Banco de dados semeado com sucesso!');
